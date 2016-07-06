@@ -12,35 +12,35 @@ void Error(U32 expected, SU32 result, U32 linenumber)
     }
 }
 
-void TestSoftUintAddition(U32 a, U32 b, U32 linenumber)
+void TestSoftUintAddition(U32 x, U32 y, U32 linenumber)
 {
-    U32 a0 = a;
-    U32 b0 = b;
-    SU32 a1 = a;
-    SU32 b1 = b;
+    U32 x0 = x;
+    U32 y0 = y;
+    SU32 x1 = x;
+    SU32 y1 = y;
     
-    U32 rb = a0 + b0;
-    SU32 ra = a1 + b1;
+    U32 r0 = x0 + y0;
+    SU32 r1 = x1 + y1;
     
-    Error(rb, ra, linenumber);
+    Error(r0, r1, linenumber);
 }
 
-#define TEST_SOFT_UINT_ADDITION(a, b) TestSoftUintAddition((a), (b), __LINE__)
+#define TEST_SOFT_UINT_ADDITION(x, y) TestSoftUintAddition((x), (y), __LINE__)
 
-void TestSoftUintSubtraction(U32 a, U32 b, U32 linenumber)
+void TestSoftUintSubtraction(U32 x, U32 y, U32 linenumber)
 {
-    U32 a0 = a;
-    U32 b0 = b;
-    SU32 a1 = a;
-    SU32 b1 = b;
+    U32 x0 = x;
+    U32 y0 = y;
+    SU32 x1 = x;
+    SU32 y1 = y;
     
-    U32 rb = a0 - b0;
-    SU32 ra = a1 - b1;
+    U32 r0 = x0 - y0;
+    SU32 r1 = x1 - y1;
     
-    Error(rb, ra, linenumber);
+    Error(r0, r1, linenumber);
 }
 
-#define TEST_SOFT_UINT_SUBTRACTION(a, b) TestSoftUintSubtraction((a), (b), __LINE__)
+#define TEST_SOFT_UINT_SUBTRACTION(x, y) TestSoftUintSubtraction((x), (y), __LINE__)
 
 int main (int argc, char **argv)
 {

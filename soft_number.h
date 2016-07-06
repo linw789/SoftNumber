@@ -36,7 +36,7 @@ struct SI32
 };
 
 // 32-bit floating point
-struct SF32
+struct SR32
 {
     void operator=(float value)
     {
@@ -51,7 +51,7 @@ U32 SU32ToUint32(SU32 x)
     return x.v;
 }
 
-I32 S32ToInt32(SU32 x)
+I32 SI32ToInt32(SI32 x)
 {
     // regardless of the Endianness.
     I32 result = 0;
@@ -87,21 +87,21 @@ SU32 DiminishedTwoComplement(SU32 x)
     return SU32(result);
 }
 
-SU32 operator+(SU32 a, SU32 b)
+SU32 operator+(SU32 x, SU32 y)
 {
     U32 sum = 0;
     U32 carry = 0;
     U32 mask = 1;
     for (;;)
     {
-        U32 bit_a = a.v & mask;
-        U32 bit_b = b.v & mask;
-        sum |= (bit_a ^ bit_b) ^ carry;
+        U32 bit_x = x.v & mask;
+        U32 bit_y = y.v & mask;
+        sum |= (bit_x ^ bit_y) ^ carry;
         
         mask = mask << 1;
         if (!mask) break;
         
-        carry = (bit_a & bit_b) | ((bit_a ^ bit_b) & carry);
+        carry = (bit_x & bit_y) | ((bit_x ^ bit_y) & carry);
         carry = carry << 1;
     }
     
@@ -113,17 +113,16 @@ SU32 operator+(SU32 a, SU32 b)
  method 1: drc(drc(x) + y)
  method 2: (x + drc(y)) - (r ^ n) + 1
 */
-SU32 operator-(SU32 a, SU32 b)
+SU32 operator-(SU32 x, SU32 y)
 {
     // use method 2
     
-    SU32 dtc_b = DiminishedTwoComplement(b);
+    SU32 dtc_y = DiminishedTwoComplement(y);
     
     // automatically subtract (r ^ n) by overflowing
-    SU32 st = a + SU32(dtc_b);
+    SU32 st = x + SU32(dtc_y);
     
     SU32 result = st + SU32(1);
     
     return result;
 }
-
