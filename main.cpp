@@ -42,6 +42,21 @@ void TestSoftUintSubtraction(U32 x, U32 y, U32 linenumber)
 
 #define TEST_SOFT_UINT_SUBTRACTION(x, y) TestSoftUintSubtraction((x), (y), __LINE__)
 
+void TestSoftUintMultiplication(U32 x, U32 y, U32 linenumber)
+{
+    U32 x0 = x;
+    U32 y0 = y;
+    SU32 x1 = x;
+    SU32 y1 = y;
+    
+    U32 r0 = x0 * y0;
+    SU32 r1 = x1 * y1;
+    
+    Error(r0, r1, linenumber);
+}
+
+#define TEST_SOFT_UINT_MULTIPLICATION(x, y) TestSoftUintMultiplication((x), (y), __LINE__)
+
 int main (int argc, char **argv)
 {
     printf("Testing soft number ...\n");
@@ -76,6 +91,15 @@ int main (int argc, char **argv)
     TEST_SOFT_UINT_SUBTRACTION(0, 0xffffffff);
     TEST_SOFT_UINT_SUBTRACTION(1, 0xffffffff);
     
+    TEST_SOFT_UINT_MULTIPLICATION(0, 0);
+    TEST_SOFT_UINT_MULTIPLICATION(1, 0);
+    TEST_SOFT_UINT_MULTIPLICATION(1, 2);
+    TEST_SOFT_UINT_MULTIPLICATION(8, 7);
+    TEST_SOFT_UINT_MULTIPLICATION(2343, 47320);
+    TEST_SOFT_UINT_MULTIPLICATION(0xffffffff, 1);
+    TEST_SOFT_UINT_MULTIPLICATION(0xffffffff, 5);
+    TEST_SOFT_UINT_MULTIPLICATION(0xffffffff, 0xffffffff);
+
     if (error_count == 0)
     {
         printf("\nAll tests passed!\n");

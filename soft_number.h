@@ -160,7 +160,47 @@ SU32 operator-(SU32 x, SU32 y)
     // automatically subtract (r ^ n) by overflowing
     SU32 st = x + SU32(dtc_y);
     
-    SU32 result = st + SU32(1);
+    SU32 result = st + 1;
     
     return result;
+}
+
+/*
+
+ naive method:
+ 
+         101011
+    *      1101
+    -----------
+         101011
+    +        0
+    +  101011
+    + 101011
+    -----------
+     1000101111
+ 
+ */
+SU32 operator*(SU32 x, SU32 y)
+{
+    SU32 sum = 0;
+    SU32 counter = 0;
+    U32 mask = 1;
+    U32 bit_y = 0;
+    
+    do
+    {
+        bit_y = y.v & mask;
+        
+        // TODO lw: eliminate this branch
+        if (bit_y)
+        {
+            U32 mx = x.v << counter.v;
+            sum = sum + SU32(mx);
+        }
+
+        counter = counter + 1;
+        mask = mask << 1;
+    } while (mask);
+
+    return sum;
 }
