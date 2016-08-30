@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef int32_t  I32;
 typedef uint32_t U32;
@@ -28,17 +29,6 @@ struct SU32
 struct SI32
 {
     void operator=(I32 value)
-    {
-        v = value;
-    }
-    
-    U32 v;
-};
-
-// 32-bit floating point
-struct SR32
-{
-    void operator=(float value)
     {
         v = value;
     }
@@ -179,7 +169,7 @@ SU32 operator-(SU32 x, SU32 y)
     -----------
      1000101111
  
- */
+*/
 SU32 operator*(SU32 x, SU32 y)
 {
     SU32 sum = 0;
@@ -191,7 +181,7 @@ SU32 operator*(SU32 x, SU32 y)
     {
         bit_y = y.v & mask;
         
-        // TODO lw: eliminate this branch
+        // TODO lw: could we eliminate this branch?
         if (bit_y)
         {
             U32 mx = x.v << counter.v;
@@ -203,4 +193,121 @@ SU32 operator*(SU32 x, SU32 y)
     } while (mask);
 
     return sum;
+}
+
+/*
+ long division:
+ 
+     1001101 / 11 = 11001
+ 
+       0
+    /-------------
+ 11/ 1 0 0 1 1 0 1
+     1 0
+     0 0
+     -----
+     1 0 0
+ 
+       0 1
+    /-------------
+ 11/ 1 0 0 1 1 0 1
+     1 0 0
+       1 1
+     -------
+         1 1
+
+       0 1 1
+    /-------------
+ 11/ 1 0 0 1 1 0 1
+         1 1
+         1 1
+         -----
+           0 1
+ 
+       0 1 1 0
+    /-------------
+ 11/ 1 0 0 1 1 0 1
+           0 1
+             0
+           -----
+             1 0
+ 
+       0 1 1 0 0
+    /-------------
+ 11/ 1 0 0 1 1 0 1
+             1 0
+               0
+             -----
+             1 0 1
+ 
+       0 1 1 0 0 1
+    /-------------
+ 11/ 1 0 0 1 1 0 1
+             1 0 1
+               1 1
+             -----
+             0 1 0
+*/
+SU32 operator/(SU32 dividend, SU32 divisor)
+{
+    if (divisor.v == 0)
+    {
+        fprintf(stderr, "Division by zero!\n");
+        exit(-1);
+    }
+    if (dividend.v == 0)
+    {
+        return 0;
+    }
+    
+    SU32 dividend_firstbitpos = 0x80000000;
+    SU32 dividend_bitcount = 32;
+
+    SU32 divisor_firstbitpos = 0x80000000;
+    SU32 divisor_bitcount = 32;
+
+    while ((dividend.v & dividend_firstbitpos.v) == 0)
+    {
+        dividend_firstbitpos.v >>= 1;
+        dividend_bitcount = dividend_bitcount - 1;
+    }
+    
+    while ((divisor.v & divisor_firstbitpos.v) == 0)
+    {
+        divisor_firstbitpos.v >>= 1;
+        divisor_bitcount = divisor_bitcount - 1;
+    }
+
+    if (divisor_firstbitpos.v > dividend_firstbitpos.v)
+    {
+        return 0; // divisor is larger than dividend
+    }
+    
+    SU32 bitcount_diff = dividend_bitcount - divisor_bitcount;
+    SU32 dividend_step = dividend;
+    SU32 divisor_shifted = 0;
+    SU32 quotient = 0;
+    
+    divisor_shifted.v = divisor.v << bitcount_diff.v;
+
+    if (dividend_step.v >= divisor_shifted.v)
+    {
+        quotient.v = quotient.v | (1 << bitcount_diff.v); 
+        dividend_step = dividend_step - divisor_shifted;
+    }
+
+    while (bitcount_diff.v)
+    {
+        bitcount_diff = bitcount_diff - 1;
+
+        divisor_shifted.v = divisor.v << bitcount_diff.v;
+
+        if (dividend_step.v >= divisor_shifted.v)
+        {
+            quotient.v = quotient.v | (1 << bitcount_diff.v); 
+            dividend_step = dividend_step - divisor_shifted;
+        }
+    }
+    
+    return quotient;
 }
