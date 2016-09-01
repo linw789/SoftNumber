@@ -94,7 +94,6 @@ SU32 operator+(SU32 x, SU32 y)
         sum |= (bit_x ^ bit_y) ^ carry;
         
         mask = mask << 1;
-        if (!mask) break;
         
         carry = (bit_x & bit_y) | ((bit_x ^ bit_y) & carry);
         carry = carry << 1;
@@ -105,7 +104,6 @@ SU32 operator+(SU32 x, SU32 y)
         sum |= (bit_x ^ bit_y) ^ carry;
         
         mask = mask << 1;
-        if (!mask) break;
         
         carry = (bit_x & bit_y) | ((bit_x ^ bit_y) & carry);
         carry = carry << 1;
@@ -116,7 +114,6 @@ SU32 operator+(SU32 x, SU32 y)
         sum |= (bit_x ^ bit_y) ^ carry;
         
         mask = mask << 1;
-        if (!mask) break;
         
         carry = (bit_x & bit_y) | ((bit_x ^ bit_y) & carry);
         carry = carry << 1;
